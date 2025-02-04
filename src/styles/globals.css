@@ -1,0 +1,23 @@
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(-45deg, #121C3B, #1F2C5B, #162447);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.btn-primary {
+  background-color: #007bff !important;
+  border: none;
+  padding: 15px 30px;
+  font-size: 1.2rem;
+  border-radius: 50px;
+  transition: transform 0.2s ease-in-out;
+}
+
+.btn-primary:hover {
+  transform: scale(1.1);
+}
