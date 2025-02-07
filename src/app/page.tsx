@@ -8,61 +8,79 @@ export default function StartPage() {
 
   return (
     <div 
-      className="d-flex justify-content-center align-items-center vh-100"
+      className="vh-100 vw-100 d-flex flex-column justify-content-center align-items-center"
       style={{
-        background: "linear-gradient(135deg, #121C3B, #1F2C5B, #162447)",
+        background: "#0e1834", // Full-page dark blue background
         color: "white",
         fontFamily: "Poppins, sans-serif",
+        textAlign: "center",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center", // Ensure content is centered
+        alignItems: "center",
+        width: "100vw",
+        height: "100vh",
+        margin: 0,
+        padding: 0,
+        overflow: "hidden",
       }}
     >
-      {/* Floating Card with Glassmorphism Effect (No Borders) */}
-      <motion.div
-        initial={{ scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 0.7, ease: "easeOut" }}
-        className="text-center p-5 shadow-lg"
+      {/* Animated Heading with Glow */}
+      <motion.h1 
+        initial={{ opacity: 0, y: -40 }} 
+        animate={{ opacity: 1, y: 0 }} 
+        transition={{ duration: 1, ease: "easeOut" }} 
         style={{
-          background: "rgba(255, 255, 255, 0.1)", // Light transparent background
-          backdropFilter: "blur(10px)", // Glass effect
-          borderRadius: "20px", // Smooth rounded edges
-          boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.3)", // Soft floating shadow
-          padding: "40px 60px"
+          textShadow: "0px 0px 20px rgba(255, 255, 255, 0.8)", // White glow effect
+          fontSize: "3rem",
+          fontWeight: "bold",
+          marginBottom: "15px"
         }}
       >
-        {/* Animated Text Drop-In */}
-        <motion.h1 
-          initial={{ opacity: 0, y: -50 }} 
-          animate={{ opacity: 1, y: 0 }} 
-          transition={{ duration: 1, ease: "easeOut" }} 
-          style={{
-            textShadow: "0px 4px 10px rgba(255, 255, 255, 0.5)",
-            fontSize: "2.5rem",
-            fontWeight: "bold",
-            marginBottom: "20px"
-          }}
-        >
-          Welcome to Swipe Challenge!
-        </motion.h1>
+        Welcome to Swipe Challenge!
+      </motion.h1>
 
-        {/* Perfectly Centered Button with 3D Hover Effect */}
-        <motion.button 
-          onClick={() => router.push("/swipe")}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          style={{
-            backgroundColor: "#007bff",
-            color: "white",
-            border: "none",
-            padding: "15px 30px",
-            fontSize: "1.2rem",
-            borderRadius: "50px",
-            transition: "transform 0.2s ease-in-out",
-            boxShadow: "0px 5px 15px rgba(0, 123, 255, 0.4)",
-          }}
-        >
-          Start Swiping
-        </motion.button>
-      </motion.div>
+      {/* Subtext Animation with Glow */}
+      <motion.p
+        initial={{ opacity: 0, y: 20 }} 
+        animate={{ opacity: 1, y: 0 }} 
+        transition={{ duration: 1.2, ease: "easeOut" }}
+        style={{
+          fontSize: "1.3rem",
+          color: "#f8f9fa",
+          marginBottom: "30px",
+          fontWeight: "500",
+          textShadow: "0px 0px 10px rgba(255, 255, 255, 0.6)" // Subtle glow effect
+        }}
+      >
+        <strong>Let's Go Left</strong>, <strong>Right</strong>, or <strong>Just Skip</strong>.
+      </motion.p>
+
+      {/* Centered Animated Button */}
+      <motion.button 
+        onClick={() => router.push("/swipe")}
+        initial={{ y: -200, opacity: 0 }} // Start from the top
+        animate={{ y: 0, opacity: 1 }} // Drop into the center
+        transition={{ duration: 1, ease: "easeOut" }}
+        whileHover={{ scale: 1.1, boxShadow: "0px 0px 20px rgba(255, 255, 255, 1)" }} // Brighter glow on hover
+        whileTap={{ scale: 0.9 }}
+        style={{
+          background: "white", 
+          color: "#0056b3",
+          border: "none",
+          padding: "20px 50px",
+          fontSize: "1.5rem",
+          borderRadius: "50px",
+          transition: "all 0.3s ease-in-out",
+          boxShadow: "0px 0px 30px rgba(255, 255, 255, 0.8)", // **Initial glow**
+          fontWeight: "600",
+          textTransform: "uppercase",
+          letterSpacing: "1px",
+          cursor: "pointer"
+        }}
+      >
+        Start Swiping
+      </motion.button>
     </div>
   );
 }
