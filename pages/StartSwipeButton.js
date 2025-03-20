@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 
-export default function StartPage() {
+export default function StartSwipeButton() {
   const router = useRouter();
 
   return (
@@ -58,7 +58,7 @@ export default function StartPage() {
 
       {/* Centered Animated Button */}
       <motion.button 
-        onClick={() => router.push("/swipe")}
+        onClick={() => router.push("/home")}
         initial={{ y: -200, opacity: 0 }} // Start from the top
         animate={{ y: 0, opacity: 1 }} // Drop into the center
         transition={{ duration: 1, ease: "easeOut" }}

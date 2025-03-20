@@ -1,5 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
+import React from "react";  // ✅ Explicitly import React
 
 export default function ProgressIndicator({ progress, current, total }: { progress: number, current: number, total: number }) {
   return (

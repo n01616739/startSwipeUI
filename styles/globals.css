@@ -1,0 +1,108 @@
+/* Custom global styles */
+
+/* Body styling */
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f3f4f6; /* Light grey background */
+  color: #333; /* Default text color */
+}
+
+/* Navbar styling */
+nav {
+  background-color: #1e3a8a; /* Indigo background */
+  padding: 0.75rem 1.5rem; /* Add some space around */
+}
+
+nav a {
+  color: #fff;
+  text-decoration: none;
+  margin-right: 1rem;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+nav a:hover {
+  color: #ff7800; /* Hover effect for links */
+}
+
+/* Button styling */
+button {
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  cursor: pointer;
+}
+
+/* Form inputs */
+input, select {
+  border-radius: 0.375rem; /* Rounded corners */
+  border: 1px solid #ddd; /* Light grey border */
+  padding: 0.75rem 1rem;
+  width: 100%;
+  font-size: 1rem;
+}
+
+input:focus, select:focus {
+  border-color: #4f46e5; /* Purple border on focus */
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2); /* Subtle glow */
+}
+
+/* Form container */
+form {
+  padding: 2rem;
+  background-color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Light shadow */
+  border-radius: 0.5rem;
+}
+
+/* Form headings */
+h2 {
+  font-size: 1.875rem; /* Larger font size */
+  font-weight: bold;
+  color: #1e3a8a; /* Indigo color */
+  margin-bottom: 1rem;
+}
+
+/* Text styles */
+.text-center {
+  text-align: center;
+}
+
+/* Utility for spacing and alignment */
+.mt-4 {
+  margin-top: 1rem;
+}
+
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
+.mb-6 {
+  margin-bottom: 1.5rem;
+}
+
+/* Utility for links */
+a {
+  text-decoration: none;
+  color: #1e40af; /* Indigo color for links */
+}
+
+a:hover {
+  color: #ff7800; /* Hover color for links */
+  text-decoration: underline;
+}
+
+/* Footer or other sections */
+footer {
+  background-color: #1e3a8a;
+  color: #fff;
+  padding: 2rem 0;
+  text-align: center;
+}
+
+footer p {
+  font-size: 1rem;
+  color: #fff;
+}
