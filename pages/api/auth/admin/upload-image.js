@@ -1,3 +1,5 @@
+// pages/api/auth/admin/upload-image.js
+
 import formidable from "formidable";
 import fs from "fs";
 import path from "path";
@@ -30,8 +32,8 @@ const handler = async (req, res) => {
         return res.status(400).json({ message: "Error in file upload" });
       }
 
-      const image_left = files.image_left?.[0]?.newFilename || files.image_left?.newFilename;
-      const image_right = files.image_right?.[0]?.newFilename || files.image_right?.newFilename;
+      const image_left = files.file_left?.[0]?.newFilename || files.file_left?.newFilename;
+      const image_right = files.file_right?.[0]?.newFilename || files.file_right?.newFilename;
 
       if (!image_left || !image_right) {
         return res.status(400).json({ message: "Both image files must be uploaded." });
