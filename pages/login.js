@@ -36,14 +36,14 @@ const Login = () => {
       });
     }
 
-    console.log("✅ Session cleaned");
+    console.log(" Session cleaned");
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
 
-    console.log("🔑 Attempting login for:", email);
+    console.log(" Attempting login for:", email);
 
     try {
       const response = await fetch("/api/auth/user/login", {
