@@ -1,6 +1,8 @@
-"use client"; // ✅ Ensures this runs on the client side
 
-import { useState } from "react";
+
+"use client"; // 
+
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import jwt from "jsonwebtoken";
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
@@ -8,12 +10,38 @@ import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(null); // ✅ Handle errors
+  const [error, setError] = useState(null);
   const router = useRouter();
+
+  useEffect(() => {
+    console.log("🧹 Clearing previous sessions...");
+
+    // Clear localStorage
+    localStorage.clear();
+
+    // Clear sessionStorage
+    sessionStorage.clear();
+
+    // Clear cookies
+    document.cookie.split(";").forEach((cookie) => {
+      document.cookie = cookie
+        .replace(/^ +/, "")
+        .replace(/=.*/, `=;expires=${new Date(0).toUTCString()};path=/`);
+    });
+
+    // Optional: Clear cache storage (for PWA)
+    if ("caches" in window) {
+      caches.keys().then((names) => {
+        for (let name of names) caches.delete(name);
+      });
+    }
+
+    console.log("✅ Session cleaned");
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null); // ✅ Reset error before making request
+    setError(null);
 
     console.log("🔑 Attempting login for:", email);
 
@@ -25,29 +53,26 @@ const Login = () => {
       });
 
       const data = await response.json();
-      
+
       if (!response.ok) {
         throw new Error(data.message || "Login failed");
       }
 
-      console.log("✅ Login successful. Storing token & user email...");
+      console.log(" Login successful. Storing token & user email...");
 
-      // ✅ Store JWT token and user email in localStorage
       localStorage.setItem("token", data.token);
       localStorage.setItem("userEmail", email);
 
-      // ✅ Decode the JWT token to check the role
       const decoded = jwt.decode(data.token);
       console.log("📜 Decoded Token:", decoded);
 
-      // ✅ Redirect based on user role
       if (decoded.role === "user") {
         router.push("/StartSwipeButton");
       } else if (decoded.role === "admin") {
         router.push("/admin-dashboard");
       }
     } catch (error) {
-      console.error("❌ Login error:", error);
+      console.error(" Login error:", error);
       setError(error.message);
     }
   };
@@ -57,7 +82,7 @@ const Login = () => {
       <div className="card shadow-lg p-4" style={{ maxWidth: '400px' }}>
         <h2 className="text-center mb-4">Login to Your Account</h2>
 
-        {error && <p className="alert alert-danger text-center">{error}</p>} {/* ✅ Show error message */}
+        {error && <p className="alert alert-danger text-center">{error}</p>}
 
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
@@ -94,7 +119,6 @@ const Login = () => {
           </button>
         </form>
 
-        {/* Registration Link */}
         <div className="text-center mt-4">
           <span className="text-muted">Don't have an account? </span>
           <a href="/register" className="text-primary">Register</a>
