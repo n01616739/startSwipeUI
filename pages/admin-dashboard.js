@@ -1,85 +1,35 @@
-// "use client";
-
-// import { useState } from "react";
-
-// export default function AdminDashboard() {
-//   const [leftImage, setLeftImage] = useState(null);
-//   const [rightImage, setRightImage] = useState(null);
-//   const [message, setMessage] = useState("");
-
-//   const handleUpload = async () => {
-//     if (!leftImage || !rightImage) {
-//       setMessage("❗ Please select both images before uploading.");
-//       return;
-//     }
-
-//     const formData = new FormData();
-//     formData.append("file_left", leftImage);
-//     formData.append("file_right", rightImage);
-
-//     try {
-//       const res = await fetch("/api/auth/admin/upload-image", {
-//         method: "POST",
-//         body: formData,
-//       });
-
-//       const data = await res.json();
-
-//       if (res.ok) {
-//         setMessage("✅ Images uploaded and pushed to users!");
-//         setLeftImage(null);
-//         setRightImage(null);
-//       } else {
-//         setMessage(`❌ Upload failed: ${data.message}`);
-//       }
-//     } catch (error) {
-//       console.error("❌ Upload error:", error);
-//       setMessage("❌ Something went wrong during upload.");
-//     }
-//   };
-
-//   return (
-//     <div style={{ padding: "2rem", textAlign: "center" }}>
-//       <h1>📤 Admin Dashboard - Upload Image Pair</h1>
-
-//       <div style={{ margin: "20px" }}>
-//         <label>Left Image: </label>
-//         <input type="file" accept="image/*" onChange={(e) => setLeftImage(e.target.files[0])} />
-//       </div>
-
-//       <div style={{ margin: "20px" }}>
-//         <label>Right Image: </label>
-//         <input type="file" accept="image/*" onChange={(e) => setRightImage(e.target.files[0])} />
-//       </div>
-
-//       <button
-//         onClick={handleUpload}
-//         style={{
-//           padding: "10px 20px",
-//           backgroundColor: "#28a745",
-//           color: "white",
-//           border: "none",
-//           borderRadius: "5px",
-//           cursor: "pointer",
-//         }}
-//       >
-//         Upload & Push to Users
-//       </button>
-
-//       {message && <p style={{ marginTop: "20px", fontWeight: "bold" }}>{message}</p>}
-//     </div>
-//   );
-// }
-
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import jwt from "jsonwebtoken";
 
 export default function AdminDashboard() {
+  const router = useRouter();
   const [leftImage, setLeftImage] = useState(null);
   const [rightImage, setRightImage] = useState(null);
   const [message, setMessage] = useState("");
   const [isUploading, setIsUploading] = useState(false);
+
+  //  Protect the route
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      router.push("/login");
+      return;
+    }
+
+    try {
+      const decoded = jwt.decode(token);
+      if (!decoded || decoded.role !== "admin") {
+        router.push("/login");
+      }
+    } catch (err) {
+      console.error("Token decode failed:", err);
+      router.push("/login");
+    }
+  }, []);
 
   const handleUpload = async () => {
     if (!leftImage || !rightImage) {
@@ -102,16 +52,16 @@ export default function AdminDashboard() {
       setIsUploading(false);
 
       if (res.ok) {
-        setMessage(" Images uploaded and pushed to users!");
+        setMessage("✅ Images uploaded and pushed to users!");
         setLeftImage(null);
         setRightImage(null);
       } else {
-        setMessage(` Upload failed: ${data.message}`);
+        setMessage(`❌ Upload failed: ${data.message}`);
       }
     } catch (error) {
-      console.error(" Upload error:", error);
+      console.error("❌ Upload error:", error);
       setIsUploading(false);
-      setMessage("Something went wrong during upload.");
+      setMessage("❌ Something went wrong during upload.");
     }
   };
 
@@ -139,13 +89,16 @@ export default function AdminDashboard() {
         }}
       >
         <img
-          src="/logo.png" // Replace with actual logo path
+          src="/logo.png"
           alt="Logo"
           style={{ height: "40px" }}
         />
         <h2 style={{ margin: 0 }}>Upload Image</h2>
         <button
-          onClick={() => (window.location.href = "/login")}
+          onClick={() => {
+            localStorage.clear();
+            router.push("/login");
+          }}
           style={{
             padding: "8px 16px",
             backgroundColor: "#e74c3c",
@@ -228,7 +181,7 @@ export default function AdminDashboard() {
               fontWeight: "bold",
             }}
           >
-            {isUploading ? "Uploading..." : "  Upload & Push to Users"}
+            {isUploading ? "Uploading..." : "Upload & Push to Users"}
           </button>
 
           {message && (
@@ -247,6 +200,7 @@ export default function AdminDashboard() {
             </p>
           )}
         </div>
+        
       </main>
 
       {/* Footer */}
@@ -263,4 +217,3 @@ export default function AdminDashboard() {
     </div>
   );
 }
-
