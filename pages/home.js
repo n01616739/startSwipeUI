@@ -167,8 +167,7 @@ export default function Home() {
   style={{ display: "flex", flexDirection: "column", alignItems: "center", cursor: "pointer" }}
 >
   <div style={{ position: "relative" }}>
-    <FaBell size={24} color={newQuestionAvailable ? "gold" : "#ccc"} />
-    {newQuestionAvailable && (
+  <FaBell size={24} style={{ color: "red" }} />  {newQuestionAvailable && (
       <div style={{
         position: "absolute",
         top: -2,
