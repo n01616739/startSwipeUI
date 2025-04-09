@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import jwt from "jsonwebtoken";
 
@@ -11,7 +11,10 @@ export default function AdminDashboard() {
   const [message, setMessage] = useState("");
   const [isUploading, setIsUploading] = useState(false);
 
-  //  Protect the route
+  const leftInputRef = useRef(null);
+  const rightInputRef = useRef(null);
+
+  // Protect the route
   useEffect(() => {
     const token = localStorage.getItem("token");
 
@@ -55,6 +58,15 @@ export default function AdminDashboard() {
         setMessage("✅ Images uploaded and pushed to users!");
         setLeftImage(null);
         setRightImage(null);
+
+        // Reset file input fields
+        if (leftInputRef.current) leftInputRef.current.value = "";
+        if (rightInputRef.current) rightInputRef.current.value = "";
+
+        // Hide the success message after 4 seconds
+        setTimeout(() => {
+          setMessage("");
+        }, 4000);
       } else {
         setMessage(`❌ Upload failed: ${data.message}`);
       }
@@ -88,11 +100,7 @@ export default function AdminDashboard() {
           boxShadow: "0 2px 6px rgba(0, 0, 0, 0.1)",
         }}
       >
-        <img
-          src="/logo.png"
-          alt="Logo"
-          style={{ height: "40px" }}
-        />
+        <img src="/logo.png" alt="Logo" style={{ height: "40px" }} />
         <h2 style={{ margin: 0 }}>Upload Image</h2>
         <button
           onClick={() => {
@@ -140,6 +148,7 @@ export default function AdminDashboard() {
           <div style={{ marginBottom: "1rem", textAlign: "left" }}>
             <label style={{ fontWeight: "bold" }}>Left Image</label>
             <input
+              ref={leftInputRef}
               type="file"
               accept="image/*"
               onChange={(e) => setLeftImage(e.target.files[0])}
@@ -155,6 +164,7 @@ export default function AdminDashboard() {
           <div style={{ marginBottom: "1.5rem", textAlign: "left" }}>
             <label style={{ fontWeight: "bold" }}>Right Image</label>
             <input
+              ref={rightInputRef}
               type="file"
               accept="image/*"
               onChange={(e) => setRightImage(e.target.files[0])}
@@ -200,7 +210,6 @@ export default function AdminDashboard() {
             </p>
           )}
         </div>
-        
       </main>
 
       {/* Footer */}
