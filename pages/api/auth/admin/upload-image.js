@@ -28,7 +28,7 @@ const handler = async (req, res) => {
 
     form.parse(req, async (err, fields, files) => {
       if (err) {
-        console.error("❌ Form parse error:", err);
+        console.error(" Form parse error:", err);
         return res.status(400).json({ message: "Error in file upload" });
       }
 
@@ -57,7 +57,7 @@ const handler = async (req, res) => {
       return res.status(200).json({ message: "Images added successfully", question: newQuestion });
     });
   } catch (error) {
-    console.error("❌ Upload error:", error);
+    console.error("Upload error:", error);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
