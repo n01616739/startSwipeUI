@@ -161,21 +161,36 @@ export default function Home() {
         <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
           <button style={buttonStyle("#007bff")} onClick={handleSkip}>Skip</button>
 
-          {/* 🔔 Bell Icon Next to Skip */}
-          <div style={{ position: "relative", cursor: "pointer" }} onClick={handleBellClick}>
-            <FaBell size={24} color={newQuestionAvailable ? "#ffcc00" : "#ccc"} />
-            {newQuestionAvailable && (
-              <div style={{
-                position: "absolute",
-                top: -2,
-                right: -2,
-                backgroundColor: "red",
-                borderRadius: "50%",
-                width: "10px",
-                height: "10px"
-              }}></div>
-            )}
-          </div>
+        {/* 🔔 Bell Icon with Text Below */}
+<div
+  onClick={handleBellClick}
+  style={{ display: "flex", flexDirection: "column", alignItems: "center", cursor: "pointer" }}
+>
+  <div style={{ position: "relative" }}>
+    <FaBell size={24} color={newQuestionAvailable ? "gold" : "#ccc"} />
+    {newQuestionAvailable && (
+      <div style={{
+        position: "absolute",
+        top: -2,
+        right: -2,
+        backgroundColor: "red",
+        borderRadius: "50%",
+        width: "10px",
+        height: "10px"
+      }}></div>
+    )}
+  </div>
+  <span style={{
+    fontSize: "12px",
+    color: "black",
+    marginTop: "4px",
+    textAlign: "center"
+  }}>
+    Stay updated!
+  </span>
+</div>
+
+          
         </div>
       </div>
 
