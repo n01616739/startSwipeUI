@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import { useRouter } from "next/router";
+import { FaBell } from "react-icons/fa";
 import Model from "@/components/dog";
 import Confetti from "react-confetti";
 import io from "socket.io-client";
@@ -16,11 +17,9 @@ export default function Home() {
   const [allAnswered, setAllAnswered] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
   const [answeredCount, setAnsweredCount] = useState(0);
-  const [unansweredCount, setUnansweredCount] = useState(0);
   const [userEmail, setUserEmail] = useState(null);
   const [hoveredSide, setHoveredSide] = useState(null);
-  const [justRestarted, setJustRestarted] = useState(false); // ✅ NEW
-
+  const [newQuestionAvailable, setNewQuestionAvailable] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -45,18 +44,14 @@ export default function Home() {
 
       const shuffled = shuffleArray(data);
       setQuestions(shuffled);
-      setUnansweredCount(shuffled.length);
-
-      const totalRes = await fetch(`/api/questions-count`);
-      const { total } = await totalRes.json();
-      setAnsweredCount(total - shuffled.length);
-
+      setAnsweredCount(0);
       setCurrentIndex(0);
       setAllAnswered(false);
     } catch (err) {
       console.error("❌ Error fetching questions:", err);
     } finally {
       setLoading(false);
+      setNewQuestionAvailable(false);
     }
   };
 
@@ -74,23 +69,10 @@ export default function Home() {
       console.log("✅ Socket connected:", socket.id);
     });
 
-    socket.on("newImage", async (newQuestionData) => {
+    socket.on("newImage", (newQuestionData) => {
       const exists = questions.some(q => q._id === newQuestionData._id);
-      if (exists) return;
-
-      try {
-        const res = await fetch(`/api/unanswered?email=${userEmail}`);
-        const updated = await res.json();
-        const newQ = updated.find(q => q._id === newQuestionData._id);
-
-        if (newQ) {
-          setQuestions(prev => [...prev, newQ]);
-          setUnansweredCount(prev => prev + 1);
-          setAllAnswered(false);
-          localStorage.setItem(`allAnswered_${userEmail}`, "false");
-        }
-      } catch (err) {
-        console.error("❌ Error processing newImage:", err);
+      if (!exists) {
+        setNewQuestionAvailable(true);
       }
     });
 
@@ -113,16 +95,16 @@ export default function Home() {
         body: JSON.stringify({ email: userEmail, questionId, answer }),
       });
 
-      setQuestions(prev => prev.filter(q => q._id !== questionId));
+      const updated = questions.filter(q => q._id !== questionId);
+      setQuestions(updated);
       setAnsweredCount(prev => prev + 1);
-      setUnansweredCount(prev => prev - 1);
 
-      if (currentIndex + 1 < unansweredCount) {
-        setCurrentIndex(prev => prev + 1);
-      } else {
+      if (updated.length === 0) {
         setAllAnswered(true);
         localStorage.setItem(`allAnswered_${userEmail}`, "true");
         setShowConfetti(true);
+      } else {
+        setCurrentIndex(0);
       }
     } catch (error) {
       console.error("❌ Error saving answer:", error);
@@ -130,7 +112,7 @@ export default function Home() {
   };
 
   const handleSkip = () => {
-    if (currentIndex + 1 < unansweredCount) {
+    if (currentIndex + 1 < questions.length) {
       setCurrentIndex(prev => prev + 1);
     } else {
       setAllAnswered(true);
@@ -139,37 +121,28 @@ export default function Home() {
   };
 
   const handleExit = () => {
-    localStorage.removeItem("token");
-    router.push("/StartSwipeButton");
-  };
-
-  const handleLogout = () => {
     localStorage.removeItem("userEmail");
     localStorage.removeItem("token");
     router.push("/login");
   };
 
-  // ✅ NEW: Restart logic
-  const handleRestart = async () => {
-    localStorage.setItem(`allAnswered_${userEmail}`, "false");
-    setJustRestarted(true);
-    setLoading(true);
-    await fetchUnansweredQuestions(userEmail);
-    setJustRestarted(false);
+  const handleBellClick = () => {
+    if (userEmail) {
+      fetchUnansweredQuestions(userEmail);
+    }
   };
 
-  // ✅ Only show "All done" message if not fetching after restart
-  if (allAnswered && !justRestarted) {
+  if (allAnswered) {
     return (
       <div style={{ textAlign: "center", padding: "20px", position: "relative" }}>
         {showConfetti && <Confetti numberOfPieces={300} recycle={false} />}
         <h2>🎉 All questions are done! Please come back later.</h2>
         <p>You've answered all available questions. Thank you!</p>
-        <button onClick={handleRestart} style={buttonStyle("#007bff")}>
-          Restart (Check for New Questions)
+        <button onClick={handleBellClick} style={buttonStyle("#007bff")}>
+          {newQuestionAvailable ? "🔔 New Question Available - Click to Refresh" : "Restart"}
         </button>
         <br />
-        <button onClick={handleLogout} style={{ ...buttonStyle("#ff4d4d"), marginTop: "10px" }}>
+        <button onClick={handleExit} style={{ ...buttonStyle("#ff4d4d"), marginTop: "10px" }}>
           Logout
         </button>
       </div>
@@ -185,7 +158,25 @@ export default function Home() {
     <div style={containerStyle}>
       <div style={headerStyle}>
         <button style={buttonStyle("#ff4d4d")} onClick={handleExit}>Exit</button>
-        <button style={buttonStyle("#007bff")} onClick={handleSkip}>Skip</button>
+        <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+          <button style={buttonStyle("#007bff")} onClick={handleSkip}>Skip</button>
+
+          {/* 🔔 Bell Icon Next to Skip */}
+          <div style={{ position: "relative", cursor: "pointer" }} onClick={handleBellClick}>
+            <FaBell size={24} color={newQuestionAvailable ? "#ffcc00" : "#ccc"} />
+            {newQuestionAvailable && (
+              <div style={{
+                position: "absolute",
+                top: -2,
+                right: -2,
+                backgroundColor: "red",
+                borderRadius: "50%",
+                width: "10px",
+                height: "10px"
+              }}></div>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* LEFT Image */}
@@ -202,7 +193,7 @@ export default function Home() {
         onMouseLeave={() => setHoveredSide(null)}
       />
 
-      {/* Dog 3D Model */}
+      {/* 3D Model */}
       <Canvas
         camera={{ position: [0, 2, 5], fov: 50 }}
         style={{
@@ -235,7 +226,7 @@ export default function Home() {
       />
 
       <div style={progressStyle}>
-        ✅ {answeredCount} / {answeredCount + unansweredCount} Questions Answered
+        ✅ {answeredCount} / {questions.length} Questions Answered
       </div>
     </div>
   );
